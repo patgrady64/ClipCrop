@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog
-from PIL import Image, ImageGrab, ImageTk
+from PIL import Image, ImageGrab, ImageTk # pyright: ignore[reportMissingImports]
 import os
 import datetime
 import sys
