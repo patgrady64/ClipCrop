@@ -21,15 +21,12 @@ ClipCrop is a high-performance, keyboard-driven image cropping utility designed 
 
 ## Setup and Build
 
-1. Dependencies
-Ensure you have the required libraries installed by running this command in your terminal:
+1. Ensure you have the required libraries installed by running this command in your terminal:
 
 `pip install pillow`
 
-2. Prepare Icon
-Place your icon.ico file in the same directory as main.py.
+2. Place your icon.ico file in the same directory as main.py.
 
-3. Create Executable
-Use PyInstaller to build the distributable by running this command in your terminal:
+3. Use PyInstaller to build the distributable by running this command in your terminal:
 
 `pyinstaller --noconsole --onefile --icon=icon.ico --name=ClipCrop main.py`
