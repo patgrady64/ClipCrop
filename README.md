@@ -4,10 +4,10 @@ ClipCrop is a high-performance, keyboard-driven image cropping utility designed 
 
 ## Features
 
-*Keyboard-First Workflow: Execute all actions without touching your mouse.
-*Smart Saving: Files are automatically named with a YYYYMMDDHHMMSS timestamp.
-*Single-Instance Enforcement: Prevents duplicate processes from running simultaneously.
-*Clean UI: Automatically centers and scales images to fit your screen with perfect padding.
+* Keyboard-First Workflow: Execute all actions without touching your mouse.
+* Smart Saving: Files are automatically named with a YYYYMMDDHHMMSS timestamp.
+* Single-Instance Enforcement: Prevents duplicate processes from running simultaneously.
+* Clean UI: Automatically centers and scales images to fit your screen with perfect padding.
 
 ## Keyboard Shortcuts
 
