@@ -11,13 +11,13 @@ ClipCrop is a high-performance, keyboard-driven image cropping utility designed 
 
 ## Keyboard Shortcuts
 
-## #Action:         Shortcut:
-
-Paste Image         Ctrl + V
-Save Crop           Ctrl + S
-Clear Canvas        Ctrl + X
-Minimize App        Esc
-Quit App            Ctrl + Shift + X
+| Action | Shortcut |
+| ------ | ---------|
+| Paste Image | Ctrl + V |
+| Save Crop | Ctrl + S |
+| Clear Canvas | Ctrl + X |
+| Minimize App | Esc |
+| Quit App | Ctrl + Shift + X|
 
 ## Setup and Build
 
