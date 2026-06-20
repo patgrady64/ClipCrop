@@ -1,4 +1,4 @@
-# ** ClipCrop **
+# **ClipCrop**
 
 ClipCrop is a high-performance, keyboard-driven image cropping utility designed for speed and productivity. It automatically handles large images, provides precise cropping handles, and uses a simplified workflow for capturing and saving conte
 
