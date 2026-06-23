@@ -14,6 +14,10 @@ class CropBox:
         self.handle_size = 6
         self.coords = [img_x, img_y, img_x + img_w, img_y + img_h]
         self.active_handle = None
+        self.mask_img = None # Reference for the dimmed overlay
+
+        # Dimming mask: Create a single image item on the canvas
+        self.mask_item = self.canvas.create_image(0, 0, anchor="nw", tags="mask")
 
         self.canvas.bind("<ButtonPress-1>", self.on_press)
         self.canvas.bind("<B1-Motion>", self.on_drag)
@@ -28,6 +32,9 @@ class CropBox:
 
     def update_handles(self):
         x1, y1, x2, y2 = self.coords
+        
+        self.update_mask() # Refresh the overlay
+
         points = [
             (x1, y1), (x2, y1), (x2, y2), (x1, y2),
             ((x1+x2)/2, y1), (x2, (y1+y2)/2), ((x1+x2)/2, y2), (x1, (y1+y2)/2)
@@ -48,6 +55,15 @@ class CropBox:
     def on_drag(self, event):
         if self.active_handle is not None:
             x, y = event.x, event.y
+            x1, y1, x2, y2 = self.coords
+
+            img_x1, img_y1 = self.canvas.bbox(self.canvas.find_withtag("all")[0])[:2]
+            img_x2 = img_x1 + (x2 - x1)
+            img_y2 = img_y1 + (y2 - y1)
+
+            x = max(img_x1, min(x, self.canvas.winfo_width()))
+            y = max(img_y1, min(y, self.canvas.winfo_height()))
+            
             if self.active_handle == 0: self.coords[0], self.coords[1] = x, y
             elif self.active_handle == 1: self.coords[2], self.coords[1] = x, y
             elif self.active_handle == 2: self.coords[2], self.coords[3] = x, y
@@ -60,6 +76,55 @@ class CropBox:
 
     def on_release(self, event):
         self.active_handle = None
+
+    def update_mask(self):
+        w = self.canvas.winfo_width()
+        h = self.canvas.winfo_height()
+        if w <= 1 or h <= 1:
+            return
+
+        # full dim overlay (transparent black)
+        overlay = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+
+        # ONLY dim the image area (important)
+        ix1, iy1, ix2, iy2 = self.canvas.bbox("all")  # fallback-safe
+
+        # fallback if bbox fails
+        if ix1 is None:
+            return
+
+        # crop box coords
+        x1, y1, x2, y2 = map(int, self.coords)
+        x1, x2 = sorted((x1, x2))
+        y1, y2 = sorted((y1, y2))
+
+        # clamp to screen
+        x1 = max(0, x1)
+        y1 = max(0, y1)
+        x2 = min(w, x2)
+        y2 = min(h, y2)
+
+        # STEP 1: dim EVERYTHING
+        dim = Image.new("RGBA", (w, h), (0, 0, 0, 120))
+        overlay = Image.alpha_composite(overlay, dim)
+
+        # STEP 2: punch out crop area (make it clear again)
+        if x2 > x1 and y2 > y1:
+            hole = Image.new("RGBA", (x2 - x1, y2 - y1), (0, 0, 0, 0))
+            overlay.paste(hole, (x1, y1))
+
+        # apply to canvas
+        self.mask_img = ImageTk.PhotoImage(overlay)
+        self.canvas.itemconfig(self.mask_item, image=self.mask_img)
+
+        # IMPORTANT: layering order
+        self.canvas.tag_raise(self.mask_item)
+        if self.rect:
+            self.canvas.tag_raise(self.rect)
+
+        for h in self.handles:
+            if h:
+                self.canvas.tag_raise(h)
 
 class MainApp:
     def __init__(self, root):
@@ -111,8 +176,9 @@ class MainApp:
         
         self.tk_img = ImageTk.PhotoImage(display_img)
         self.canvas.delete("all")
-        self.canvas.create_image(x, y, image=self.tk_img, anchor="nw")
-        
+        self.image_id = self.canvas.create_image(x, y, image=self.tk_img, anchor="nw")
+        self.canvas.tag_lower(self.image_id)
+
         self.crop_box = CropBox(self.canvas, x, y, display_w, display_h)
         self.crop_box.create()
 
